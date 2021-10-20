@@ -22,13 +22,13 @@ Complex Add(Complex a, Complex b)
   return new Complex(a.a + b.a, a.b + b.b);
 }
 
-// ac + iad + ibc - bd
+// (ac - bd) + (iad + ibc)
 Complex Multiply(Complex a, Complex b)
 {
   return new Complex(a.a * b.a - a.b * b.b, a.a * b.b + a.b * b.a);
 }
 
-// a^2 + i2ab - b^2
+// (a^2 - b^2) + i2ab 
 Complex Square(Complex complex)
 {
   return new Complex(complex.a * complex.a - complex.b * complex.b, 2 * complex.a * complex.b);
