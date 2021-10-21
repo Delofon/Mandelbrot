@@ -15,6 +15,8 @@ float prevWheel;
 int _iterations = 100;
 int _iter_step = 10;
 
+float computation_time_ms = 0; // Fun little value
+
 void setup()
 {
   size(400, 400);
@@ -65,6 +67,16 @@ void keyPressed()
     _iterations = 100;
   }
   
+  // Print the settings
+  if(key == 'f')
+  {
+    println("Real: " + x_offset);
+    println("Imaginary: " + y_offset);
+    println("Zoom: " + _zoom);
+    println("Iterations: " + _iterations);
+    println("Computation time (seconds): " + computation_time_ms / 1000);
+  }
+  
   // Move the complex plane if any of these keys were pressed
   float x_axis = int(key == 'd') - int(key == 'a');
   float y_axis = int(key == 'w') - int(key == 's');
@@ -106,6 +118,8 @@ void PlotMandelbrot(float a_offset, float b_offset, float zoom, int iterations, 
 {
   color white = color(160, 160, 160);
   color black = color(0, 0, 0);
+  
+  float start = millis();
   
   for(int i = 0; i < pixelWidth * pixelHeight; i++)
   {
@@ -162,5 +176,7 @@ void PlotMandelbrot(float a_offset, float b_offset, float zoom, int iterations, 
         set(x, y, colour);
       }
     }
+    
+    computation_time_ms = millis() - start;
   }
 }
