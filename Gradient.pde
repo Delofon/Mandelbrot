@@ -3,7 +3,7 @@ import java.util.Set;
 
 class Gradient
 {
-  // key colours like key frames in animating and video editing software. The gradient basically represents the timeline between different colours
+  // Key colours are like key frames in animating and video editing software. The gradient basically represents the timeline between different colours
   HashMap<Float, Integer> keyColours;
   
   public Gradient()
@@ -14,14 +14,14 @@ class Gradient
   // Complicated gradient stuff
   color Evaluate(float time)
   {
-    // safe time
+    // Safe time
     time = Clamp(0, 1, time);
     
-    // if time lands on a key colour, retrieve it
+    // If time lands on a key colour, retrieve it
     if(keyColours.containsKey(time))
       return keyColours.get(time);
     
-    // find previous and next key colours
+    // Find previous and next key colours and their according keys
     float leftKey = Float.NEGATIVE_INFINITY;
     float rightKey = Float.POSITIVE_INFINITY;
     
@@ -45,11 +45,11 @@ class Gradient
     color leftColour = keyColours.get(leftKey);
     color rightColour = keyColours.get(rightKey);
     
-    // prepare for lerping
+    // Prepare for lerping by normalizing the colour values.
     float l_r = red(leftColour) / 255, l_g = green(leftColour) / 255, l_b = blue(leftColour) / 255;
     float r_r = red(rightColour) / 255, r_g = green(rightColour) / 255, r_b = blue(rightColour) / 255;
     
-    // lerp
+    // Lerp
     
     float left_lerp = InvLerp(rightKey, leftKey, time);
     float right_lerp = InvLerp(leftKey, rightKey, time);
@@ -62,13 +62,13 @@ class Gradient
     float r_g_lerp = r_g * right_lerp;
     float r_b_lerp = r_b * right_lerp;
     
-    // add resulting values together and that will be your colour in normalized coordinates
+    // Add resulting values together and that will be your colour in normalized coordinates
     
     float r_lerp = l_r_lerp + r_r_lerp;
     float g_lerp = l_g_lerp + r_g_lerp;
     float b_lerp = l_b_lerp + r_b_lerp;
     
-    // denormalize
+    // Denormalize for use with the Processing 2D rendering system
     
     int r = floor(r_lerp * 255);
     int g = floor(g_lerp * 255);
