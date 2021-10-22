@@ -2,8 +2,6 @@ Gradient colourGradient;
 
 float x_offset = -.7;
 float y_offset = 0;
-float x_offset = -0.743642;
-float y_offset = 0.13183;
 float _zoom = 350;
 
 // relative
