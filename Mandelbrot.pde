@@ -146,12 +146,14 @@ void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom,
       
       // z = z ^ 2 + c - Mandelbrot set function
       //z = Add(Square(z), c);
+      z = Add(Square(z), c);
       
       // z = (|Re(z)| + |Im(z)|i) ^ 2 + c - The Burning Ship function
       //z = Add(Square(new Complex(abs(z.a), abs(z.b))), c);
       
       // z = conj(z ^ 2) + c <=> z = Re(z ^ 2) - Im(z ^ 2)i + c - Mandelbar set or Tricorn fractal function
       z = Add(Conjugate(Square(z)), c);
+      //z = Add(Conjugate(Square(z)), c);
       
       // If abs > 2 - bailout (it is proven that if the point shoots farther 2 then it is definitely not part of the Mandelbrot set)
       if(AbsSqr(z) > 2 * 2)
