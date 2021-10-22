@@ -37,7 +37,7 @@ void setup()
 
 void draw()
 {
-  PlotMandelbrot(x_offset, y_offset, _zoom, _iterations, colourGradient);
+  MandelbrotUnoptimizedEscapeTime(x_offset, y_offset, _zoom, _iterations, colourGradient);
 }
 
 void keyPressed()
@@ -71,7 +71,7 @@ void keyPressed()
   if(key == 'f')
   {
     println("Real: " + x_offset);
-    println("Imaginary: " + y_offset);
+    println("Imaginary: " + -y_offset);
     println("Zoom: " + _zoom);
     println("Iterations: " + _iterations);
     println("Computation time (seconds): " + computation_time_ms / 1000);
@@ -79,7 +79,7 @@ void keyPressed()
   
   // Move the complex plane if any of these keys were pressed
   float x_axis = int(key == 'd') - int(key == 'a');
-  float y_axis = int(key == 'w') - int(key == 's');
+  float y_axis = int(key == 's') - int(key == 'w');
   
   x_offset += x_axis * x_speed / _zoom;
   y_offset += y_axis * y_speed / _zoom;
@@ -91,7 +91,7 @@ void mousePressed()
 {
   // Move the complex plane to the point where the mouse clicked
   float x_coord = (mouseX - pixelWidth / 2 ) / _zoom + x_offset;
-  float y_coord = -(mouseY - pixelHeight / 2) / _zoom + y_offset;
+  float y_coord = (mouseY - pixelHeight / 2) / _zoom + y_offset;
   
   x_offset = x_coord;
   y_offset = y_coord;
@@ -114,7 +114,7 @@ void mouseWheel(MouseEvent event)
   redraw();
 }
 
-void PlotMandelbrot(float a_offset, float b_offset, float zoom, int iterations, Gradient gradient)
+void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom, int iterations, Gradient gradient)
 {
   color white = color(160, 160, 160);
   color black = color(0, 0, 0);
@@ -129,7 +129,7 @@ void PlotMandelbrot(float a_offset, float b_offset, float zoom, int iterations, 
     
     // Get pixel coordinates in the complex plane
     float x_coord = (x - pixelWidth / 2 ) / zoom + a_offset;
-    float y_coord = -(y - pixelHeight / 2) / zoom + b_offset; // -(y - pixelHeight / 2) because in the complex plane imaginary axis points upward but in screen coords y axis points down
+    float y_coord = (y - pixelHeight / 2) / zoom + b_offset;
     
     // Initialize a complex number that this pixel represents
     Complex c = new Complex(x_coord, y_coord);
@@ -142,8 +142,16 @@ void PlotMandelbrot(float a_offset, float b_offset, float zoom, int iterations, 
     // Iterate over the z for iterations amount of times
     for(int iteration = 0; iteration < iterations; iteration++)
     {
-      // z = z^2 + c
-      z = Add(Square(z), c);
+      // Uncomment only one of these functions. Uncommenting multiple will produce weird and unexpected (but fascinating) results!
+      
+      // z = z ^ 2 + c - Mandelbrot set function
+      //z = Add(Square(z), c);
+      
+      // z = (|Re(z)| + |Im(z)|i) ^ 2 + c - The Burning Ship function
+      //z = Add(Square(new Complex(abs(z.a), abs(z.b))), c);
+      
+      // z = conj(z ^ 2) + c <=> z = Re(z ^ 2) - Im(z ^ 2)i + c - Mandelbar set or Tricorn fractal function
+      z = Add(Conjugate(Square(z)), c);
       
       // If abs > 2 - bailout (it is proven that if the point shoots farther 2 then it is definitely not part of the Mandelbrot set)
       if(AbsSqr(z) > 2 * 2)

@@ -50,3 +50,10 @@ float Abs(Complex complex)
 {
   return sqrt(AbsSqr(complex));
 }
+
+// The conjugate of this complex number
+// a - bi
+Complex Conjugate(Complex complex)
+{
+  return new Complex(complex.a, -complex.b);
+}
