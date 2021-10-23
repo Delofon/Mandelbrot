@@ -1,6 +1,3 @@
-import java.util.Map;
-import java.util.Set;
-
 class Gradient
 {
   // Key colours are like key frames in animating and video editing software. The gradient basically represents the timeline between different colours

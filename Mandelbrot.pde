@@ -90,11 +90,8 @@ void keyPressed()
 void mousePressed()
 {
   // Move the complex plane to the point where the mouse clicked
-  float x_coord = (mouseX - pixelWidth / 2 ) / _zoom + x_offset;
-  float y_coord = (mouseY - pixelHeight / 2) / _zoom + y_offset;
-  
-  x_offset = x_coord;
-  y_offset = y_coord;
+  x_offset += (mouseX - pixelWidth / 2 ) / _zoom;
+  y_offset += (mouseY - pixelHeight / 2) / _zoom;
   
   redraw();
 }
