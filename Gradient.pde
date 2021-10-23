@@ -45,7 +45,7 @@ class Gradient
     color leftColour = keyColours.get(leftKey);
     color rightColour = keyColours.get(rightKey);
     
-    // Prepare for lerping by normalizing the colour values.
+    // Prepare for lerping by normalizing the colour values
     float l_r = red(leftColour) / 255, l_g = green(leftColour) / 255, l_b = blue(leftColour) / 255;
     float r_r = red(rightColour) / 255, r_g = green(rightColour) / 255, r_b = blue(rightColour) / 255;
     
