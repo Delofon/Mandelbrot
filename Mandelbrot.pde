@@ -1,8 +1,8 @@
 Gradient colourGradient;
 
-float x_offset = -.7;
-float y_offset = 0;
-float _zoom = 350;
+BigDecimal x_offset = new BigDecimal(-.7);
+BigDecimal y_offset = new BigDecimal(0);
+BigDecimal _zoom = new BigDecimal(350);
 
 // relative
 float x_speed = 1;
@@ -12,7 +12,7 @@ float zoom_step = .1;
 
 float prevWheel;
 
-int _iterations = 100;
+int _iterations = 10;
 int _iter_step = 10;
 
 float computation_time_ms = 0; // Fun little value
@@ -61,9 +61,9 @@ void keyPressed()
   // Reset the settings
   if(key == 'r')
   {
-    x_offset = 0;
-    y_offset = 0;
-    _zoom = 100;
+    x_offset = new BigDecimal(0);
+    y_offset = new BigDecimal(0);
+    _zoom = new BigDecimal(100);
     _iterations = 100;
   }
   
@@ -71,7 +71,7 @@ void keyPressed()
   if(key == 'f')
   {
     println("Real: " + x_offset);
-    println("Imaginary: " + -y_offset);
+    println("Imaginary: " + y_offset.negate());
     println("Zoom: " + _zoom);
     println("Iterations: " + _iterations);
     println("Computation time (seconds): " + computation_time_ms / 1000);
@@ -81,8 +81,8 @@ void keyPressed()
   float x_axis = int(key == 'd') - int(key == 'a');
   float y_axis = int(key == 's') - int(key == 'w');
   
-  x_offset += x_axis * x_speed / _zoom;
-  y_offset += y_axis * y_speed / _zoom;
+  x_offset = x_offset.add(new BigDecimal(x_axis * x_speed).divide(_zoom));
+  y_offset = y_offset.add(new BigDecimal(y_axis * y_speed).divide(_zoom));
   
   redraw();
 }
@@ -90,8 +90,8 @@ void keyPressed()
 void mousePressed()
 {
   // Move the complex plane to the point where the mouse clicked
-  float x_coord = (mouseX - pixelWidth / 2 ) / _zoom + x_offset;
-  float y_coord = (mouseY - pixelHeight / 2) / _zoom + y_offset;
+  BigDecimal x_coord = new BigDecimal(mouseX - pixelWidth / 2 ).divide(_zoom).add(x_offset);
+  BigDecimal y_coord = new BigDecimal(mouseY - pixelWidth / 2 ).divide(_zoom).add(y_offset);
   
   x_offset = x_coord;
   y_offset = y_coord;
@@ -104,17 +104,17 @@ void mouseWheel(MouseEvent event)
   float wheel = event.getCount();
   
   // Zoom in/out according to mouse wheel.
-  _zoom -= wheel * zoom_step * _zoom;
+  _zoom = _zoom.subtract(_zoom.multiply(new BigDecimal(zoom_step * wheel)));
   
-  if(_zoom < 0)
-    _zoom = 0;
+  if(_zoom.compareTo(BigDecimal.ZERO) == -1)
+    _zoom = BigDecimal.ZERO;
   
   prevWheel = wheel;
   
   redraw();
 }
 
-void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom, int iterations, Gradient gradient)
+void MandelbrotUnoptimizedEscapeTime(BigDecimal a_offset, BigDecimal b_offset, BigDecimal zoom, int iterations, Gradient gradient)
 {
   color white = color(160, 160, 160);
   color black = color(0, 0, 0);
@@ -128,13 +128,13 @@ void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom,
     int y = i / pixelWidth;
     
     // Get pixel coordinates in the complex plane
-    float x_coord = (x - pixelWidth / 2 ) / zoom + a_offset;
-    float y_coord = (y - pixelHeight / 2) / zoom + b_offset;
+    BigDecimal x_coord = new BigDecimal(x - pixelWidth / 2 ).divide(zoom, MathContext.DECIMAL128).add(a_offset);
+    BigDecimal y_coord = new BigDecimal(y - pixelHeight / 2).divide(zoom, MathContext.DECIMAL128).add(b_offset);
     
     // Initialize a complex number that this pixel represents
     Complex c = new Complex(x_coord, y_coord);
     // The number being iterated over in the Mandelbrot set function. Different values of z produce a variety of interesting distortions of the Mandelbrot set
-    Complex z = new Complex(0, 0);
+    Complex z = new Complex(new BigDecimal(0), new BigDecimal(0));
     
     // Variables for helping in colouring the image
     boolean bailout = false;
@@ -154,7 +154,7 @@ void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom,
       //z = Add(Conjugate(Square(z)), c);
       
       // If abs > 2 - bailout (it is proven that if the point shoots farther 2 then it is definitely not part of the Mandelbrot set)
-      if(AbsSqr(z) > 2 * 2)
+      if(AbsSqr(z).compareTo(new BigDecimal(2 * 2)) == 1)
       {
         bailout = true;
         iterations_to_bailout = iteration;

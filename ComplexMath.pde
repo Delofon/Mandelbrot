@@ -1,15 +1,15 @@
 class Complex
 {
   // a + bi
-  public float a; // real component
-  public float b; // imaginary component
+  public BigDecimal a; // real component
+  public BigDecimal b; // imaginary component
   
   public Complex()
   {
-    a = 0;
-    b = 0;
+    a = BigDecimal.ZERO;
+    b = BigDecimal.ZERO;
   }
-  public Complex(float a, float b)
+  public Complex(BigDecimal a, BigDecimal b)
   {
     this.a = a;
     this.b = b;
@@ -22,38 +22,38 @@ class Complex
 // (a + c) + (b + d)i
 Complex Add(Complex a, Complex b)
 {
-  return new Complex(a.a + b.a, a.b + b.b);
+  return new Complex(a.a.add(b.a), a.b.add(b.b));
 }
 
 // (ac - bd) + (ad + bc)i
 Complex Multiply(Complex a, Complex b)
 {
-  return new Complex(a.a * b.a - a.b * b.b, a.a * b.b + a.b * b.a);
+  return new Complex(a.a.multiply(b.a).subtract(a.b.multiply(b.b)), a.a.multiply(b.b).add(a.b.multiply(b.a)));
 }
 
 // (a^2 - b^2) + 2abi 
 Complex Square(Complex complex)
 {
-  return new Complex(complex.a * complex.a - complex.b * complex.b, 2 * complex.a * complex.b);
+  return new Complex(complex.a.pow(2).subtract(complex.b.pow(2)), complex.a.multiply(new BigDecimal(2)).multiply(complex.b));
 }
 
 // The absolute value of the complex number is its distance D from the origin. Using Pythagoras's theorem,
 // D ^ 2 = a ^ 2 + b ^ 2
-float AbsSqr(Complex complex)
+BigDecimal AbsSqr(Complex complex)
 {
-  return complex.a * complex.a + complex.b * complex.b;
+  return complex.a.pow(2).add(complex.b.pow(2));
 }
 
 // The square root of above function:
 // D = sqrt(a ^ 2 + b ^ 2)
-float Abs(Complex complex)
+BigDecimal Abs(Complex complex)
 {
-  return sqrt(AbsSqr(complex));
+  return AbsSqr(complex).pow(-2);
 }
 
 // The conjugate of this complex number
 // a - bi
 Complex Conjugate(Complex complex)
 {
-  return new Complex(complex.a, -complex.b);
+  return new Complex(complex.a, complex.b.negate());
 }
