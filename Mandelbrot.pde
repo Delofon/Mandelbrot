@@ -12,7 +12,7 @@ float zoom_step = .1;
 
 float prevWheel;
 
-int _iterations = 100;
+int _max_iterations = 100;
 int _iter_step = 10;
 
 float computation_time_ms = 0; // Fun little value
@@ -37,7 +37,7 @@ void setup()
 
 void draw()
 {
-  MandelbrotUnoptimizedEscapeTime(x_offset, y_offset, _zoom, _iterations, colourGradient);
+  MandelbrotUnoptimizedEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
 }
 
 void keyPressed()
@@ -45,16 +45,16 @@ void keyPressed()
   // Add iterations
   if(key == '+' || key == '=')
   {
-    _iterations += _iter_step;
+    _max_iterations += _iter_step;
   }
   // Subtract iterations
   if(key == '-')
   {
-    _iterations -= _iter_step;
+    _max_iterations -= _iter_step;
     // If iterations is less than 0 then pressing + to add may confuse the user
-    if(_iterations < 0)
+    if(_max_iterations < 0)
     {
-      _iterations = 0;
+      _max_iterations = 0;
     }
   }
   
@@ -64,7 +64,7 @@ void keyPressed()
     x_offset = 0;
     y_offset = 0;
     _zoom = 100;
-    _iterations = 100;
+    _max_iterations = 100;
   }
   
   // Print the settings
@@ -73,7 +73,7 @@ void keyPressed()
     println("Real: " + x_offset);
     println("Imaginary: " + -y_offset);
     println("Zoom: " + _zoom);
-    println("Iterations: " + _iterations);
+    println("Iterations: " + _max_iterations);
     println("Computation time (seconds): " + computation_time_ms / 1000);
   }
   
@@ -111,11 +111,8 @@ void mouseWheel(MouseEvent event)
   redraw();
 }
 
-void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom, int iterations, Gradient gradient)
+void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom, int max_iterations, Gradient gradient)
 {
-  color white = color(160, 160, 160);
-  color black = color(0, 0, 0);
-  
   float start = millis();
   
   for(int i = 0; i < pixelWidth * pixelHeight; i++)
@@ -130,14 +127,14 @@ void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom,
     
     // Initialize a complex number that this pixel represents
     Complex c = new Complex(x_coord, y_coord);
-    // The number being iterated over in the Mandelbrot set function. Different values of z produce a variety of interesting distortions of the Mandelbrot set
+    // The number being iterated over in the Mandelbrot set function. Different values of z produce a variety of interesting distortions of the Mandelbrot set. Value of c skips first iteration
     Complex z = new Complex(0, 0);
     
     // Variables for helping in colouring the image
     boolean bailout = false;
-    float iterations_to_bailout = 0;
+    int pixel_iterations = 0;
     // Iterate over the z for iterations amount of times
-    for(int iteration = 0; iteration < iterations; iteration++)
+    for(int iteration = 0; iteration < max_iterations; iteration++)
     {
       // Uncomment only one of these functions. Uncommenting multiple will produce weird and unexpected (but fascinating) results!
       
@@ -154,34 +151,42 @@ void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom,
       if(AbsSqr(z) > 2 * 2)
       {
         bailout = true;
-        iterations_to_bailout = iteration;
-        iteration = iterations; // escape the loop
+        pixel_iterations = iteration;
+        iteration = max_iterations; // escape the loop
       }
       // No bailout, point is part of the Mandelbrot set
     }
     
-    if(!bailout)
+    DefaultEscapeTimeColouring(x, y, bailout, pixel_iterations, max_iterations, gradient);
+  }
+  
+  computation_time_ms = millis() - start;
+}
+
+void DefaultEscapeTimeColouring(int x, int y, boolean bailout, int pixel_iterations, int max_iterations, Gradient gradient)
+{
+  color white = color(160, 160, 160);
+  color black = color(0, 0, 0);
+  
+  if(!bailout)
+  {
+    // Point is part of the Mandelbrot set, colour black
+    set(x, y, black);
+  }
+  else
+  {
+    // Point is not part of the Mandelbrot set
+    
+    if(gradient == null)
     {
-      // Point is part of the Mandelbrot set, colour black
-      set(x, y, black);
+      // If no gradient is defined, colour white
+      set(x, y, white);
     }
     else
     {
-      // Point is not part of the Mandelbrot set
-      
-      if(gradient == null)
-      {
-        // If no gradient is defined, colour white
-        set(x, y, white);
-      }
-      else
-      {
-        // If gradient is defined, use it to colour into a rainbow
-        color colour = gradient.Evaluate(iterations_to_bailout / iterations);
-        set(x, y, colour);
-      }
+      // If gradient is defined, use it to colour into a rainbow
+      color colour = gradient.Evaluate((float)pixel_iterations / max_iterations);
+      set(x, y, colour);
     }
-    
-    computation_time_ms = millis() - start;
   }
 }

@@ -59,7 +59,7 @@ class Gradient
     float r_g_lerp = r_g * right_lerp;
     float r_b_lerp = r_b * right_lerp;
     
-    // Add resulting values together and that will be your colour in normalized coordinates
+    // Add resulting values together and that will be your colour in normalized values
     
     float r_lerp = l_r_lerp + r_r_lerp;
     float g_lerp = l_g_lerp + r_g_lerp;
