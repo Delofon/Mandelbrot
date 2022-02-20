@@ -10,9 +10,9 @@ void UnoptimizedEscapeTime(float a_offset, float b_offset, float zoom, int max_i
     float x_coord = (x - pixelWidth / 2 ) / zoom + a_offset;
     float y_coord = (y - pixelHeight / 2) / zoom + b_offset;
     
-    // Initialize a complex number that this pixel represents
+    // Initialize a complex number parameter that this pixel represents
     Complex c = new Complex(x_coord, y_coord);
-    // The number being iterated over in the Mandelbrot set function. Different values of z produce a variety of interesting distortions of the Mandelbrot set. Value of c skips first iteration
+    // The number being iterated over in the Mandelbrot set function. Different values of z produce a variety of interesting distortions of the Mandelbrot set. Value of c skips first iteration.
     Complex z = new Complex(0, 0);
     
     // Variables for helping in colouring the image
