@@ -12,7 +12,7 @@ class Gradient
   color Evaluate(float time)
   {
     // Safe time
-    time = Clamp(0, 1, time);
+    time = Clamp01(time);
     
     // If time lands on a key colour, retrieve it
     if(keyColours.containsKey(time))

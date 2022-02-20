@@ -17,3 +17,9 @@ float Clamp(float a, float b, float val)
     return b;
   return val;
 }
+
+// Same thing as above, but the number range is predefined to be [0; 1].
+float Clamp01(float val)
+{
+  return Clamp(0, 1, val);
+}

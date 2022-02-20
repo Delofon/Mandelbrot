@@ -36,8 +36,10 @@ void setup()
 }
 
 void draw()
-{
-  MandelbrotUnoptimizedEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
+{  
+  float start = millis();
+  UnoptimizedEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
+  computation_time_ms = millis() - start;
 }
 
 void keyPressed()
@@ -109,84 +111,4 @@ void mouseWheel(MouseEvent event)
   prevWheel = wheel;
   
   redraw();
-}
-
-void MandelbrotUnoptimizedEscapeTime(float a_offset, float b_offset, float zoom, int max_iterations, Gradient gradient)
-{
-  float start = millis();
-  
-  for(int i = 0; i < pixelWidth * pixelHeight; i++)
-  {
-    // Get pixel coordinates in the window
-    int x = i % pixelWidth;
-    int y = i / pixelWidth;
-    
-    // Get pixel coordinates in the complex plane
-    float x_coord = (x - pixelWidth / 2 ) / zoom + a_offset;
-    float y_coord = (y - pixelHeight / 2) / zoom + b_offset;
-    
-    // Initialize a complex number that this pixel represents
-    Complex c = new Complex(x_coord, y_coord);
-    // The number being iterated over in the Mandelbrot set function. Different values of z produce a variety of interesting distortions of the Mandelbrot set. Value of c skips first iteration
-    Complex z = new Complex(0, 0);
-    
-    // Variables for helping in colouring the image
-    boolean bailout = false;
-    int pixel_iterations = 0;
-    // Iterate over the z for iterations amount of times
-    for(int iteration = 0; iteration < max_iterations; iteration++)
-    {
-      // Uncomment only one of these functions. Uncommenting multiple will produce weird and unexpected (but fascinating) results!
-      
-      // z = z ^ 2 + c - Mandelbrot set function
-      z = Add(Square(z), c);
-      
-      // z = (|Re(z)| + |Im(z)|i) ^ 2 + c - The Burning Ship function
-      //z = Add(Square(new Complex(abs(z.a), abs(z.b))), c);
-      
-      // z = conj(z ^ 2) + c <=> z = Re(z ^ 2) - Im(z ^ 2)i + c - Mandelbar set or Tricorn fractal function
-      //z = Add(Conjugate(Square(z)), c);
-      
-      // If abs > 2 - bailout (it is proven that if the point shoots farther 2 then it is definitely not part of the Mandelbrot set)
-      if(AbsSqr(z) > 2 * 2)
-      {
-        bailout = true;
-        pixel_iterations = iteration;
-        iteration = max_iterations; // escape the loop
-      }
-      // No bailout, point is part of the Mandelbrot set
-    }
-    
-    DefaultEscapeTimeColouring(x, y, bailout, pixel_iterations, max_iterations, gradient);
-  }
-  
-  computation_time_ms = millis() - start;
-}
-
-void DefaultEscapeTimeColouring(int x, int y, boolean bailout, int pixel_iterations, int max_iterations, Gradient gradient)
-{
-  color white = color(160, 160, 160);
-  color black = color(0, 0, 0);
-  
-  if(!bailout)
-  {
-    // Point is part of the Mandelbrot set, colour black
-    set(x, y, black);
-  }
-  else
-  {
-    // Point is not part of the Mandelbrot set
-    
-    if(gradient == null)
-    {
-      // If no gradient is defined, colour white
-      set(x, y, white);
-    }
-    else
-    {
-      // If gradient is defined, use it to colour into a rainbow
-      color colour = gradient.Evaluate((float)pixel_iterations / max_iterations);
-      set(x, y, colour);
-    }
-  }
 }
