@@ -4,6 +4,15 @@ Complex MandelbrotSet(Complex z, Complex c)
   return Add(Square(z), c);
 }
 
+// The above function has some redundant multiplications; by using this instead, you can omit them.
+// You can also make similar optimized functions for other fractals.
+Complex MandelbrotSetOptimized(Complex z, Complex c)
+{
+  float re = z.a * z.a - z.b * z.b + c.a;
+  float im = (z.a + z.a) * z.b + c.b; 
+  return new Complex(re, im);
+}
+
 Complex BurningShip(Complex z, Complex c)
 {
   // z = (|Re(z)| + |Im(z)|i) ^ 2 + c - The Burning Ship function
@@ -16,8 +25,9 @@ Complex MandelbarSet(Complex z, Complex c)
   return z = Add(Conjugate(Square(z)), c);
 }
 
-Complex RandomFrac(Complex z, Complex c)
+Complex MandelbarSetAlt(Complex z, Complex c)
 {
-  // z = conj(z) ^ 2 + c - Random fractal, looks like Mandelbar
+  // z = conj(z) ^ 2 + c - While it looks different than the above as the conjugate of a different complex number is taken, infact it is the exact same equation.
+  // Try to work it out on paper to see why ;p
   return z = Add(Square(Conjugate(z)), c);
 }

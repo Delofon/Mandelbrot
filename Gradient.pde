@@ -42,6 +42,13 @@ class Gradient
     color leftColour = keyColours.get(leftKey);
     color rightColour = keyColours.get(rightKey);
     
+    // I'm not sure exactly which of the ways is the conventional one - the straight-forward lerp or the overcomplicated one.
+    // However, from my observations, the overcomplicated lerp produces better results, so I'll stick with it instead.
+    
+    //int r = floor(Lerp(red(leftColour), red(rightColour), time));
+    //int g = floor(Lerp(green(leftColour), green(rightColour), time));
+    //int b = floor(Lerp(blue(leftColour), blue(rightColour), time));
+    
     // Prepare for lerping by normalizing the colour values
     float l_r = red(leftColour) / 255, l_g = green(leftColour) / 255, l_b = blue(leftColour) / 255;
     float r_r = red(rightColour) / 255, r_g = green(rightColour) / 255, r_b = blue(rightColour) / 255;

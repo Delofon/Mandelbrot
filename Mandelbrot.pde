@@ -19,17 +19,17 @@ float computation_time_ms = 0; // Fun little value
 
 void setup()
 {
-  size(400, 400);
+  size(800, 800);
   surface.setTitle("Mandelbrot Set Plotter");
   background(255, 255, 255);
   
-  // Create a gradient between: black, blue, green, red and black
+  // Create a gradient between: black, red, green and blue
   colourGradient = new Gradient();
   colourGradient.keyColours.put(0f, color(0, 0, 0));
-  colourGradient.keyColours.put(.25f, color(0, 0, 255));
-  colourGradient.keyColours.put(.50f, color(0, 255, 0));
-  colourGradient.keyColours.put(.75f, color(255, 0, 0));
-  colourGradient.keyColours.put(1f, color(0, 0, 0));
+  colourGradient.keyColours.put(.33f, color(255, 0, 0));
+  colourGradient.keyColours.put(.67f, color(0, 255, 0));
+  colourGradient.keyColours.put(1f, color(0, 0, 255));
+  //colourGradient.keyColours.put(1f, color(0, 0, 0));
   
   // Do not want to recalculate the Mandelbrot set each frame. Your computer will get upset!
   noLoop();
@@ -38,7 +38,9 @@ void setup()
 void draw()
 {  
   float start = millis();
-  UnoptimizedEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
+  //UnoptimizedEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
+  //PeriodicityCheckingEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
+  PeriodicityCheckingHistogramColouringEscapeTime(x_offset, y_offset, _zoom, _max_iterations, colourGradient);
   computation_time_ms = millis() - start;
 }
 
@@ -47,16 +49,18 @@ void keyPressed()
   // Add iterations
   if(key == '+' || key == '=')
   {
+    if(_max_iterations == 1)
+      _max_iterations--;
     _max_iterations += _iter_step;
   }
   // Subtract iterations
   if(key == '-')
   {
     _max_iterations -= _iter_step;
-    // If iterations is less than 0 then pressing + to add may confuse the user
-    if(_max_iterations < 0)
+    // If iterations is less than or equal to 0 then histogram colouring crashes.
+    if(_max_iterations <= 0)
     {
-      _max_iterations = 0;
+      _max_iterations = 1;
     }
   }
   
